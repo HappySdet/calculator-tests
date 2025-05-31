@@ -51,6 +51,8 @@ calculator-tests/
 │   └── videos/             
 ├── cypress.config.ts
 └── package.json
+└── tsconfig.json
+└── README.md
 ```
 
 ## 🧪 Running Tests
