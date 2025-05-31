@@ -1,4 +1,4 @@
-import { CALCULATOR_SELECTORS } from "../constants/google_calculator_page";
+import { CALCULATOR_SELECTORS } from "../constants/google_calculator_selectors";
 
 export class CalculatorPage {
   clickCalculatorButton(button: string): this {

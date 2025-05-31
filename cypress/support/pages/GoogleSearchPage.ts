@@ -1,10 +1,9 @@
 import { GOOGLE_SEARCH_PAGE_SELECTORS } from "../constants/google_search_selectors";
 
 export class GoogleSearchPage {
-  private static readonly BASE_URL = "https://www.google.com";
 
   visit(): this {
-    cy.visit(GoogleSearchPage.BASE_URL);
+    cy.visit("/");
     return this;
   }
 
