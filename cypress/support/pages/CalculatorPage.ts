@@ -1,11 +1,6 @@
 import { CALCULATOR_SELECTORS } from "../constants/google_calculator_page";
 
 export class CalculatorPage {
-  visit(): this {
-    cy.visit("https://www.google.com");
-    return this;
-  }
-
   clickCalculatorButton(button: string): this {
     cy.get(CALCULATOR_SELECTORS.buttons)
       .contains(button)

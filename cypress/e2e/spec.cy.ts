@@ -7,6 +7,7 @@ describe("Google Calculator - E2E Tests", () => {
 
   before(() => {
     googleSearch.visit();
+    googleSearch.verifyPageLoaded();
     googleSearch.typeSearchQuery("calculator");
     googleSearch.submitSearch();
     calculator.waitForCalculatorToLoad();
