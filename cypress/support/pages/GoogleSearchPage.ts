@@ -1,8 +1,8 @@
-import { GOOGLE_SEARCH_PAGE_SELECTORS } from '../constants/google_search_selectors';
+import { GOOGLE_SEARCH_PAGE_SELECTORS } from "../constants/google_search_selectors";
 
 export class GoogleSearchPage {
   visit(): this {
-    cy.visit('https://www.google.com');
+    cy.visit("https://www.google.com");
     return this;
   }
 
@@ -33,17 +33,17 @@ export class GoogleSearchPage {
   }
 
   submitSearch(): this {
-    this.searchBox.type('{enter}');
+    this.searchBox.type("{enter}");
     return this;
   }
 
   verifyLogoVisible(): this {
-    this.logo.should('be.visible');
+    this.logo.should("be.visible");
     return this;
   }
 
   verifyNavigationBarVisible(): this {
-    this.navigationBar.should('be.visible');
+    this.navigationBar.should("be.visible");
     return this;
   }
 }
