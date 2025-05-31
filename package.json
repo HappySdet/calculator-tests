@@ -1,0 +1,17 @@
+{
+  "name": "calculator",
+  "version": "1.0.0",
+  "description": "e2e tests for google calculator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
+  },
+  "author": "Harpreet Singh",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^14.4.0",
+    "http-server": "^14.1.1"
+  }
+}
