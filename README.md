@@ -2,6 +2,9 @@
 
 A comprehensive Cypress testing framework for Google Calculator functionality.
 
+<img width="1722" alt="Screenshot 2025-05-31 at 6 02 19 PM" src="https://github.com/user-attachments/assets/284ae119-d3e0-4740-9394-e955298b674c" />
+
+
 # Assumptions Taken
 
 Tests will run on testing environment where reCAPTCHA is disabled. On production, reCAPTCHA stops the cypress from crawling into google search.
