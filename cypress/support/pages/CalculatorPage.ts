@@ -1,6 +1,14 @@
 import { CALCULATOR_SELECTORS } from "../constants/google_calculator_selectors";
 
 export class CalculatorPage {
+  waitForCalculatorToLoad(): this {
+    cy.get(CALCULATOR_SELECTORS.calculatorSection).should("be.visible");
+    cy.get(CALCULATOR_SELECTORS.textField)
+      .should("be.visible")
+      .and("contain.text", "0");
+    return this;
+  }
+
   clickNumbersButton(button: string): this {
     cy.get(CALCULATOR_SELECTORS.calculatorSection).within(() => {
       cy.get(CALCULATOR_SELECTORS.numbersTable).within(() => {
@@ -74,35 +82,6 @@ export class CalculatorPage {
 
   /**
    *
-   * @param input Enter the numbers through buttons.
-   *
-   * @returns
-   */
-  inputThroughButtons(input: string): this {
-    input.split("").forEach((char) => this.clickNumbersButton(char));
-    return this;
-  }
-
-  /**
-   *
-   * @param input Enter the numbers through keyboard or can pass keyboard specific keys like backspace, enter, etc.
-   *
-   * @returns
-   */
-  inputThroughKeyboard(input: string): this {
-    if (input.startsWith("{") && input.endsWith("}")) {
-      cy.get(CALCULATOR_SELECTORS.textField).type(input);
-      return this;
-    } else {
-      input
-        .split("")
-        .forEach((char) => cy.get(CALCULATOR_SELECTORS.textField).type(char));
-      return this;
-    }
-  }
-
-  /**
-   *
    * @param expression Enter the numbers through buttons or a keyboard
    * @param method Pass the method to input the expression. By default it is buttons.
    *
@@ -117,6 +96,36 @@ export class CalculatorPage {
     return this;
   }
 
+  /**
+   *
+   * @param input Enter the numbers through buttons.
+   *
+   * @returns
+   */
+  private inputThroughButtons(input: string): this {
+    input.split("").forEach((char) => this.clickNumbersButton(char));
+    return this;
+  }
+
+  /**
+   *
+   * @param input Enter the numbers through keyboard or can pass keyboard specific keys like backspace, enter, etc.
+   *
+   * @returns
+   */
+  private inputThroughKeyboard(input: string): this {
+    if (input.startsWith("{") && input.endsWith("}")) {
+      cy.get(CALCULATOR_SELECTORS.textField).type(input);
+      return this;
+    } else {
+      input
+        .split("")
+        .forEach((char) => cy.get(CALCULATOR_SELECTORS.textField).type(char));
+      return this;
+    }
+  }
+
+  /** Get the results of the calculator */
   get result() {
     return cy.get(CALCULATOR_SELECTORS.result);
   }
@@ -128,14 +137,7 @@ export class CalculatorPage {
     });
   }
 
-  waitForCalculatorToLoad(): this {
-    cy.get(CALCULATOR_SELECTORS.calculatorSection).should("be.visible");
-    cy.get(CALCULATOR_SELECTORS.textField)
-      .should("be.visible")
-      .and("contain.text", "0");
-    return this;
-  }
-
+  /** Reset the calculator to initial state. */
   ensureCalculatorReady() {
     this.getResultValue().then((currentValue) => {
       if (currentValue === "0") {

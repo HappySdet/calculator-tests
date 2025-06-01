@@ -49,7 +49,7 @@ describe("Google Calculator - E2E Tests", () => {
 
     it("Calculation Workflow - should show correct result for decimal expression", () => {
       calculator.input("3.50+4.22", "keyboard");
-      calculator.inputThroughKeyboard("{Enter}");
+      calculator.input("{Enter}", "keyboard");
       calculator.getResultValue().should("equal", "7.72");
       calculator.allClear(); // When = or Enter is pressed, AC button should appear and click AC to clear all
     });
@@ -135,7 +135,7 @@ describe("Google Calculator - E2E Tests", () => {
       calculator.input("9999999999");
       calculator.clickOperatorsButton("multiply");
       calculator.input("9999999999");
-      calculator.inputThroughKeyboard("{Enter}");
+      calculator.input("{Enter}", "keyboard");
       calculator.getResultValue().should("equal", "1e+20");
     });
   });
