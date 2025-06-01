@@ -2,7 +2,7 @@
 
 A comprehensive Cypress testing framework for Google Calculator functionality.
 
-<img width="1722" alt="Screenshot 2025-05-31 at 6 02 19 PM" src="https://github.com/user-attachments/assets/284ae119-d3e0-4740-9394-e955298b674c" />
+<img width="1906" alt="Screenshot 2025-06-01 at 12 03 21 PM" src="https://github.com/user-attachments/assets/3eca05e8-223c-4c29-ba29-d5ad5d6a40ae" />
 
 # Assumptions Taken
 
