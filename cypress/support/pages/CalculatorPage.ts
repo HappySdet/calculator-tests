@@ -47,7 +47,8 @@ export class CalculatorPage {
   }
 
   putExpression(expression: string): this {
-    expression.split("").forEach((char) => {
+    const noSpacesExpression = expression.replace(/\s+/g, "");
+    noSpacesExpression.split("").forEach((char) => {
       if (!isNaN(Number(char)) && char.trim() !== "") {
         this.clickNumbersButton(char);
       } else if (char === "+") {
@@ -119,19 +120,18 @@ export class CalculatorPage {
     input: string,
     method: "buttons" | "keyboard" = "keyboard",
   ): this {
+    const noSpacesInput = input.replace(/\s+/g, "");
     if (method === "keyboard") {
-      if (input.startsWith("{") && input.endsWith("}")) {
-        cy.get(CALCULATOR_SELECTORS.textField).type(input);
+      if (noSpacesInput.startsWith("{") && noSpacesInput.endsWith("}")) {
+        cy.get(CALCULATOR_SELECTORS.textField).type(noSpacesInput);
       } else {
-        input
+        noSpacesInput
           .split("")
           .forEach((char) => cy.get(CALCULATOR_SELECTORS.textField).type(char));
       }
     }
     if (method === "buttons") {
-      this.putExpression(input);
-    } else {
-      cy.log("Invalid Method");
+      this.putExpression(noSpacesInput);
     }
     return this;
   }

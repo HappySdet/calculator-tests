@@ -30,40 +30,41 @@ describe("Google Calculator - E2E Tests", () => {
   });
 
   /* User Interaction Workflows -
-   * 1. Correction workflow
-   * 2. Calculation workflow
-   * 3. Operator switching workflow
-   * 4. Chain calculations workflow
+   * 1. Correction workflow using Buttons
+   * 2. Correction workflow using Keyboard
+   * 3. Calculation workflow
+   * 4. Operator switching workflow
+   * 5. Chain calculations workflow
    * Focus for e2e tests are to test user interactions instead of calculations which should be covered by unit tests.
    */
   context("User Workflows", () => {
     it("Correction Workflow - User inputs 8x8, clear an input entry using CE, retypes, and validates result", () => {
-      calculator.putExpression("8x8");
+      calculator.putExpression("8 x 8");
       calculator.clearEntry();
-      calculator.putExpression("9=");
+      calculator.putExpression("9 =");
       calculator.getResultValue().should("equal", "72");
     });
 
     it("Correction Workflow - User inputs -8x100 with keyboard", () => {
-      calculator.input("-8*100=");
+      calculator.input("-8 * 100 =");
       calculator.getResultValue().should("equal", "-800");
     });
 
     it("Calculation Workflow - should show correct result for decimal expression", () => {
-      calculator.putExpression("3.50+4.22");
+      calculator.putExpression("3.50 + 4.22");
       calculator.input("{Enter}");
       calculator.getResultValue().should("equal", "7.72");
       calculator.allClear(); // When = or Enter is pressed, AC button should appear and click AC to clear all
     });
 
     it("Operator switching workflows - should only add either multiply or divide operator after a number", () => {
-      calculator.putExpression("3x");
+      calculator.putExpression("3 x");
       calculator.putExpression("/");
       calculator.getResultValue().should("equal", "3 ÷");
     });
 
     it("Chain calculations workflow - should handle chained operations correctly: 10÷2×3.5=17.5", () => {
-      calculator.putExpression("10/2x3.5=");
+      calculator.putExpression("10 / 2 x 3.5 =");
       calculator.getResultValue().should("equal", "17.5");
     });
   });
@@ -76,12 +77,12 @@ describe("Google Calculator - E2E Tests", () => {
     });
 
     it("divide by zero should show infinity", () => {
-      calculator.putExpression("7/0=");
+      calculator.putExpression("7/0 =");
       calculator.getResultValue().should("equal", "Infinity");
     });
 
     it("zero divide by zero should show Error", () => {
-      calculator.putExpression("0/0=");
+      calculator.putExpression("0/0 =");
       calculator.getResultValue().should("equal", "Error");
     });
 
@@ -96,7 +97,7 @@ describe("Google Calculator - E2E Tests", () => {
     });
 
     it("6 x 06 should not break calculation", () => {
-      calculator.putExpression("6x06");
+      calculator.putExpression("6 x 06");
       calculator.getResultValue().should("equal", "6 × 6");
       calculator.putExpression("=");
       calculator.getResultValue().should("equal", "36");
@@ -113,7 +114,7 @@ describe("Google Calculator - E2E Tests", () => {
     });
 
     it("should show number literal using E-notation for really big numbers", () => {
-      calculator.putExpression("9999999999x9999999999");
+      calculator.putExpression("9999999999 x 9999999999");
       calculator.input("{Enter}");
       calculator.getResultValue().should("equal", "1e+20");
     });
@@ -127,7 +128,7 @@ describe("Google Calculator - E2E Tests", () => {
     });
 
     it("CE should clear input entry one by one", () => {
-      calculator.putExpression("9x9");
+      calculator.putExpression("9 x 9");
       calculator.isCEVisible().should("be.true");
       calculator.clearEntry();
       calculator.getResultValue().should("equal", "9 ×");
@@ -139,13 +140,13 @@ describe("Google Calculator - E2E Tests", () => {
 
     //Test for AC button and continue calculations
     it("should clear the calculator result/text field with single click", () => {
-      calculator.putExpression("-9x-9=");
+      calculator.putExpression("-9 x -9 =");
       calculator.getResultValue().should("equal", "81");
       calculator.isACVisible().should("be.true");
       calculator.allClear();
       calculator.getResultValue().should("equal", "0");
       calculator.isACVisible().should("be.false");
-      calculator.putExpression("-9-9=");
+      calculator.putExpression("-9-9 =");
       calculator.getResultValue().should("equal", "-18");
       calculator.isACVisible().should("be.true");
     });
