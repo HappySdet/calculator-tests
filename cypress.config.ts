@@ -13,6 +13,6 @@ export default defineConfig({
     video: true,
     videosFolder: "cypress/videos",
     trashAssetsBeforeRuns: true,
-    testIsolation: false,
+    testIsolation: false, // Have to set to false to avoid captcha on each test run unfortunately.
   },
 });

@@ -1,6 +1,8 @@
 import { CALCULATOR_SELECTORS } from "../constants/google_calculator_selectors";
 
 export class CalculatorPage {
+  CALCULATOR_PATH = "/search?q=calculator";
+
   waitForCalculatorToLoad(): this {
     cy.get(CALCULATOR_SELECTORS.calculatorSection).should("be.visible");
     cy.get(CALCULATOR_SELECTORS.textField)
@@ -10,10 +12,8 @@ export class CalculatorPage {
   }
 
   clickNumbersButton(button: string): this {
-    cy.get(CALCULATOR_SELECTORS.calculatorSection).within(() => {
-      cy.get(CALCULATOR_SELECTORS.numbersTable).within(() => {
-        cy.get(CALCULATOR_SELECTORS.buttons).contains(button).click();
-      });
+    cy.get(CALCULATOR_SELECTORS.numbersTable).within(() => {
+      cy.get(CALCULATOR_SELECTORS.buttons).contains(button).click();
     });
     return this;
   }
@@ -35,6 +35,35 @@ export class CalculatorPage {
     if (operator === "plus") {
       cy.get(CALCULATOR_SELECTORS.operators.plus).should("be.visible").click();
     }
+    if (operator === "equals") {
+      cy.get(CALCULATOR_SELECTORS.operators.equals)
+        .should("be.visible")
+        .click();
+    }
+    if (operator === "point") {
+      cy.get(CALCULATOR_SELECTORS.operators.point).should("be.visible").click();
+    }
+    return this;
+  }
+
+  putExpression(expression: string): this {
+    expression.split("").forEach((char) => {
+      if (!isNaN(Number(char)) && char.trim() !== "") {
+        this.clickNumbersButton(char);
+      } else if (char === "+") {
+        this.clickOperatorsButton("plus");
+      } else if (char === "-") {
+        this.clickOperatorsButton("minus");
+      } else if (char === "x" || char === "*") {
+        this.clickOperatorsButton("multiply");
+      } else if (char === "/" || char === "÷") {
+        this.clickOperatorsButton("divide");
+      } else if (char === "=") {
+        this.clickOperatorsButton("equals");
+      } else if (char === ".") {
+        this.clickOperatorsButton("point");
+      }
+    });
     return this;
   }
 
@@ -48,11 +77,11 @@ export class CalculatorPage {
     return this;
   }
 
-  getCEButton() {
+  private getCEButton() {
     return cy.get(CALCULATOR_SELECTORS.buttons).contains("CE");
   }
 
-  getACButton() {
+  private getACButton() {
     return cy.get(CALCULATOR_SELECTORS.buttons).contains("AC");
   }
 
@@ -82,51 +111,33 @@ export class CalculatorPage {
 
   /**
    *
-   * @param expression Enter the numbers through buttons or a keyboard
-   * @param method Pass the method to input the expression. By default it is buttons.
+   * @param input Use the operations such as backspace, enter, etc. through keyboard. Can be also use for numbers and operators.
    *
    * @returns
    */
-  input(expression: string, method: "buttons" | "keyboard" = "buttons"): this {
+  public input(
+    input: string,
+    method: "buttons" | "keyboard" = "keyboard",
+  ): this {
+    if (method === "keyboard") {
+      if (input.startsWith("{") && input.endsWith("}")) {
+        cy.get(CALCULATOR_SELECTORS.textField).type(input);
+      } else {
+        input
+          .split("")
+          .forEach((char) => cy.get(CALCULATOR_SELECTORS.textField).type(char));
+      }
+    }
     if (method === "buttons") {
-      this.inputThroughButtons(expression);
+      this.putExpression(input);
     } else {
-      this.inputThroughKeyboard(expression);
+      cy.log("Invalid Method");
     }
     return this;
-  }
-
-  /**
-   *
-   * @param input Enter the numbers through buttons.
-   *
-   * @returns
-   */
-  private inputThroughButtons(input: string): this {
-    input.split("").forEach((char) => this.clickNumbersButton(char));
-    return this;
-  }
-
-  /**
-   *
-   * @param input Enter the numbers through keyboard or can pass keyboard specific keys like backspace, enter, etc.
-   *
-   * @returns
-   */
-  private inputThroughKeyboard(input: string): this {
-    if (input.startsWith("{") && input.endsWith("}")) {
-      cy.get(CALCULATOR_SELECTORS.textField).type(input);
-      return this;
-    } else {
-      input
-        .split("")
-        .forEach((char) => cy.get(CALCULATOR_SELECTORS.textField).type(char));
-      return this;
-    }
   }
 
   /** Get the results of the calculator */
-  get result() {
+  private get result() {
     return cy.get(CALCULATOR_SELECTORS.result);
   }
 
@@ -137,8 +148,8 @@ export class CalculatorPage {
     });
   }
 
-  /** Reset the calculator to initial state. */
-  ensureCalculatorReady() {
+  /** Not using it currently - Manually Reset the calculator to initial state in case captcha block the test cases. */
+  private ensureCalculatorReady() {
     this.getResultValue().then((currentValue) => {
       if (currentValue === "0") {
         cy.log("Calculator already in initial state");
@@ -168,7 +179,7 @@ export class CalculatorPage {
     });
   }
 
-  clearAllInput() {
+  private clearAllInput() {
     // Keep pressing CE until we get to 0
     this.getResultValue().then((value) => {
       if (value !== "0") {
