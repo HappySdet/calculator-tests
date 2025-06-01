@@ -1,7 +1,6 @@
 import { GOOGLE_SEARCH_PAGE_SELECTORS } from "../constants/google_search_selectors";
 
 export class GoogleSearchPage {
-
   visit(): this {
     cy.visit("/");
     return this;

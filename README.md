@@ -7,7 +7,9 @@ A comprehensive Cypress testing framework for Google Calculator functionality.
 
 # Assumptions Taken
 
-Tests will run on testing environment where reCAPTCHA is disabled. On production, reCAPTCHA stops the cypress from crawling into google search.
+Tests should be ran on testing environment where reCAPTCHA is disabled. On production, reCAPTCHA stops the cypress from crawling into google search.
+So, captcha handler is added in commands.ts to handle reCAPTCHA. In this case, if cypress detects captcha, it will pause the tests and wait for a human to solve the captcha. And then click the resume button to resume the tests.
+Which also means, these tests can only be run using cy:open command.
 
 ## 🚀 Getting Started
 
@@ -51,7 +53,7 @@ calculator-tests/
 │   │   └── commands.js
 │   │   └── e2e.js
 │   ├── screenshots/
-│   └── videos/             
+│   └── videos/
 ├── cypress.config.ts
 └── package.json
 └── tsconfig.json
@@ -61,12 +63,14 @@ calculator-tests/
 ## 🧪 Running Tests
 
 ### Interactive Mode (Cypress GUI)
+
 ```bash
 # Open Cypress Test Runner
 npm run cy:open
 ```
 
 ### Headless Mode (CI/CD)
+
 ```bash
 # Run all tests
 npm run cy:run

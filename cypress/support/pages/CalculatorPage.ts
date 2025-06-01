@@ -1,11 +1,32 @@
 import { CALCULATOR_SELECTORS } from "../constants/google_calculator_selectors";
 
 export class CalculatorPage {
-  clickCalculatorButton(button: string): this {
-    cy.get(CALCULATOR_SELECTORS.buttons)
-      .contains(button)
-      .should("be.visible")
-      .click();
+  clickNumbersButton(button: string): this {
+    cy.get(CALCULATOR_SELECTORS.calculatorSection).within(() => {
+      cy.get(CALCULATOR_SELECTORS.numbersTable).within(() => {
+        cy.get(CALCULATOR_SELECTORS.buttons).contains(button).click();
+      });
+    });
+    return this;
+  }
+
+  clickOperatorsButton(operator: string): this {
+    if (operator === "divide") {
+      cy.get(CALCULATOR_SELECTORS.operators.divide)
+        .should("be.visible")
+        .click();
+    }
+    if (operator === "multiply") {
+      cy.get(CALCULATOR_SELECTORS.operators.multiply)
+        .should("be.visible")
+        .click();
+    }
+    if (operator === "minus") {
+      cy.get(CALCULATOR_SELECTORS.operators.minus).should("be.visible").click();
+    }
+    if (operator === "plus") {
+      cy.get(CALCULATOR_SELECTORS.operators.plus).should("be.visible").click();
+    }
     return this;
   }
 
@@ -28,55 +49,71 @@ export class CalculatorPage {
   }
 
   isCEVisible(): Cypress.Chainable<boolean> {
-    return this.getCEButton().then(($el) => $el.is(":visible"));
+    return cy.then(() => {
+      try {
+        return this.getCEButton().then(($el) => {
+          return $el.length > 0 && $el.is(":visible");
+        });
+      } catch (error) {
+        return cy.wrap(false);
+      }
+    });
   }
 
   isACVisible(): Cypress.Chainable<boolean> {
-    return this.getACButton().then(($el) => $el.is(":visible"));
+    return cy.then(() => {
+      try {
+        return this.getACButton().then(($el) => {
+          return $el.length > 0 && $el.is(":visible");
+        });
+      } catch (error) {
+        return cy.wrap(false);
+      }
+    });
   }
 
   /**
    *
-   * @param input Enter the input without spaces. For example, "5+5" is valid but "5+5=" is not. Only valid operators are +, -, *, / are allowed.
+   * @param input Enter the numbers through buttons.
    *
    * @returns
    */
   inputThroughButtons(input: string): this {
-    input.split("").forEach((char) => this.clickCalculatorButton(char));
+    input.split("").forEach((char) => this.clickNumbersButton(char));
     return this;
   }
 
   /**
    *
-   * @param input Enter the input without spaces. For example, "5+5" is valid but "5+5=" is not. Only valid operators are +, -, *, / are allowed.
+   * @param input Enter the numbers through keyboard or can pass keyboard specific keys like backspace, enter, etc.
    *
    * @returns
    */
   inputThroughKeyboard(input: string): this {
-    input
-      .split("")
-      .forEach((char) => cy.get(CALCULATOR_SELECTORS.textField).type(char));
-    return this;
+    if (input.startsWith("{") && input.endsWith("}")) {
+      cy.get(CALCULATOR_SELECTORS.textField).type(input);
+      return this;
+    } else {
+      input
+        .split("")
+        .forEach((char) => cy.get(CALCULATOR_SELECTORS.textField).type(char));
+      return this;
+    }
   }
 
-  addInput(
-    expression: string,
-    method: "buttons" | "keyboard" = "buttons",
-  ): this {
+  /**
+   *
+   * @param expression Enter the numbers through buttons or a keyboard
+   * @param method Pass the method to input the expression. By default it is buttons.
+   *
+   * @returns
+   */
+  input(expression: string, method: "buttons" | "keyboard" = "buttons"): this {
     if (method === "buttons") {
       this.inputThroughButtons(expression);
     } else {
       this.inputThroughKeyboard(expression);
     }
-    return this;
-  }
-
-  answerByEquals(): this {
-    return this.clickCalculatorButton("=");
-  }
-
-  answerByEnterButton(): this {
-    cy.get(CALCULATOR_SELECTORS.textField).type("{enter}");
     return this;
   }
 
@@ -105,19 +142,27 @@ export class CalculatorPage {
         cy.log("Calculator already in initial state");
         return;
       } else {
-        const hasAC = this.isACVisible();
-        const hasCE = this.isCEVisible();
+        // Resolve both chainables to get actual boolean values
+        this.isACVisible().then((hasAC) => {
+          this.isCEVisible().then((hasCE) => {
+            cy.log(`AC visible: ${hasAC}, CE visible: ${hasCE}`);
 
-        if (hasAC) {
-          this.allClear();
-        } else if (hasCE) {
-          this.clearAllInput();
-        } else {
-          cy.reload();
-        }
+            if (hasAC) {
+              cy.log("Clearing with AC");
+              this.allClear();
+            } else if (hasCE) {
+              cy.log("Clearing with CE");
+              this.clearAllInput();
+            } else {
+              cy.log("No clear buttons found, reloading page");
+              cy.reload();
+            }
+
+            // Verify reset worked
+            this.getResultValue().should("equal", "0");
+          });
+        });
       }
-      // Verify reset worked
-      this.getResultValue().should("equal", "0");
     });
   }
 
@@ -126,7 +171,6 @@ export class CalculatorPage {
     this.getResultValue().then((value) => {
       if (value !== "0") {
         this.clearEntry();
-        cy.wait(50);
         this.clearAllInput();
       }
     });
