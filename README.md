@@ -47,8 +47,6 @@ calculator-tests/
 │   │   └── pages
               └── CalculatorPage.ts # Page Object Model
               └── GoogleSearchPage.ts # Page Object Model
-│   │   └── utils
-│   │   └── e2e.ts
 │   │   └── commands.js
 │   │   └── e2e.js
 │   ├── screenshots/
